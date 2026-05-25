@@ -2,305 +2,84 @@
 <html lang="en">
 
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-
-<title>My Portfolio</title>
-
-<link rel="stylesheet"
-href="style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RamZan Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
 <header>
+  <div class="logo">Portfolio</div>
 
-<div class="logo">
-Portfolio
-</div>
-
-<nav>
-
-<ul>
-
-<li>
-<a href="#home">
-Home
-</a>
-</li>
-
-<li>
-<a href="#about">
-About
-</a>
-</li>
-
-<li>
-<a href="#skills">
-Skills
-</a>
-</li>
-
-<li>
-<a href="#project">
-Projects
-</a>
-</li>
-
-<li>
-<a href="#contact">
-Contact
-</a>
-</li>
-
-</ul>
-
-</nav>
-
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
 </header>
 
-<section
-class="hero"
-id="home">
-
-<div>
-
-<h1>
-
-Hi, I am
-
-<span>
-
-RamZan
-
-</span>
-
-</h1>
-
-<h2>
-
-Web Developer
-
-</h2>
-
-<p>
-
-I create modern websites
-and web applications.
-
-</p>
-
-<button>
-
-Hire Me
-
-</button>
-
-</div>
-
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1>Hi, I'm <span>RamZan</span></h1>
+    <h2>Web Developer</h2>
+    <p>I create modern, responsive and interactive websites.</p>
+    <button onclick="scrollToContact()">Hire Me</button>
+  </div>
 </section>
 
-<section id="about">
-
-<h1>
-
-About Me
-
-</h1>
-
-<p>
-
-I am a passionate web
-developer who loves
-building websites.
-
-</p>
-
+<!-- ABOUT -->
+<section id="about" class="section">
+  <h1>About Me</h1>
+  <p>I am a passionate web developer who loves building clean UI and interactive web applications using HTML, CSS and JavaScript.</p>
 </section>
 
-<section id="skills">
-
-<h1>
-
-My Skills
-
-</h1>
-
-<div class="box-area">
-
-<div class="box">
-
-HTML
-
-</div>
-
-<div class="box">
-
-CSS
-
-</div>
-
-<div class="box">
-
-JavaScript
-
-</div>
-
-<div class="box">
-
-C++
-
-</div>
-
-</div>
-
+<!-- SKILLS -->
+<section id="skills" class="section">
+  <h1>Skills</h1>
+  <div class="grid">
+    <div class="card">HTML</div>
+    <div class="card">CSS</div>
+    <div class="card">JavaScript</div>
+    <div class="card">C++</div>
+  </div>
 </section>
 
-<section id="services">
-
-<h1>
-
-Services
-
-</h1>
-
-<div class="service">
-
-<div class="card">
-
-<h2>
-
-Web Design
-
-</h2>
-
-<p>
-
-Responsive websites
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>
-
-Development
-
-</h2>
-
-<p>
-
-Modern applications
-
-</p>
-
-</div>
-
-<div class="card">
-
-<h2>
-
-UI Design
-
-</h2>
-
-<p>
-
-Creative design
-
-</p>
-
-</div>
-
-</div>
-
+<!-- PROJECTS -->
+<section id="projects" class="section">
+  <h1>Projects</h1>
+  <div class="grid">
+    <div class="card">Fitness Website</div>
+    <div class="card">Portfolio Website</div>
+    <div class="card">BMI Calculator</div>
+  </div>
 </section>
 
-<section id="project">
+<!-- CONTACT -->
+<section id="contact" class="section">
+  <h1>Contact Me</h1>
 
-<h1>
+  <form id="contactForm">
+    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="email" id="email" placeholder="Your Email" required>
+    <textarea id="message" placeholder="Your Message" required></textarea>
+    <button type="submit">Send Message</button>
+  </form>
 
-Projects
-
-</h1>
-
-<div class="service">
-
-<div class="card">
-
-Fitness Website
-
-</div>
-
-<div class="card">
-
-Portfolio
-
-</div>
-
-<div class="card">
-
-BMI Calculator
-
-</div>
-
-</div>
-
-</section>
-
-<section id="contact">
-
-<h1>
-
-Contact Me
-
-</h1>
-
-<form>
-
-<input
-type="text"
-placeholder="Name">
-
-<input
-type="email"
-placeholder="Email">
-
-<textarea
-placeholder="Message">
-</textarea>
-
-<button>
-
-Send
-
-</button>
-
-</form>
-
+  <p id="status"></p>
 </section>
 
 <footer>
-
-<p>
-
-© 2026 RamZan
-
-</p>
-
+  <p>© 2026 RamZan | All Rights Reserved</p>
 </footer>
 
-<script
-src="script.js">
-
-</script>
-
+<script src="script.js"></script>
 </body>
-
 </html>
