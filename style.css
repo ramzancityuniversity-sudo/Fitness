@@ -1,79 +1,124 @@
 /* ==========================================================================
-   1. GLOBAL STYLES & VARIABLES (সাইবার থিম কনফিগারেশন)
+   1. GLOBAL VARIABLES & RESET
    ========================================================================== */
 :root {
-    --bg-color: #0a0f1d;
-    --card-bg: rgba(16, 24, 48, 0.85);
-    --primary-color: #00ff66; /* Matrix Bright Green */
-    --secondary-color: #00e5ff; /* Cyber Cyan */
-    --text-color: #e0e6ed;
-    --text-muted: #8892b0;
-    --border-color: rgba(0, 255, 102, 0.2);
-    --border-glow: rgba(0, 255, 10 green2, 0.4);
-    --font-cyber: 'Courier New', Courier, monospace;
+    --bg-color: #0a0f0d;
+    --card-bg: #111a16;
+    --text-color: #cbd5e1;
+    --primary-color: #00ff66; /* Matrix Green */
+    --primary-glow: rgba(0, 255, 102, 0.3);
+    --secondary-color: #00e5ff; /* Cyber Blue */
+    --accent-red: #ff3366;
+    --border-color: #1f3329;
+    --font-family: 'Courier New', Courier, monospace;
+    --transition-speed: 0.3s;
 }
 
-/* Light Theme Variant (যখন টগল করা হবে) */
-.light-theme {
-    --bg-color: #f4f6f9;
-    --card-bg: rgba(255, 255, 255, 0.95);
-    --primary-color: #0066cc;
-    --secondary-color: #00b3b3;
-    --text-color: #2d3748;
-    --text-muted: #718096;
-    --border-color: rgba(0, 102, 204, 0.2);
-    --font-cyber: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Light / Alternative Cyber Interface */
+.light-cyber-theme {
+    --bg-color: #f0f4f1;
+    --card-bg: #ffffff;
+    --text-color: #1e293b;
+    --primary-color: #008833;
+    --primary-glow: rgba(0, 136, 51, 0.15);
+    --secondary-color: #007799;
+    --border-color: #cbd5e1;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html {
     scroll-behavior: smooth;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: var(--font-cyber);
-    line-height: 1.6;
+    font-family: var(--font-family);
     overflow-x: hidden;
-    transition: background 0.3s, color 0.3s;
+    line-height: 1.6;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-/* Background Canvas Overlay */
+/* Background Canvas */
 #bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   2. PRELOADER LOADING SCREEN
+   ========================================================================== */
+#loading-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
-    opacity: 0.15; /* অ্যানিমেশন হালকা রাখার জন্য */
+    background-color: #000000;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+.loader-content {
+    text-align: center;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(0, 255, 102, 0.1);
+    border-left-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+.loader-content p {
+    color: var(--primary-color);
+    letter-spacing: 2px;
+    font-weight: bold;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
 /* ==========================================================================
-   2. TOP CONTROL BAR
+   3. SYSTEM TOP BAR & CONTROLS
    ========================================================================== */
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 40px;
-    background: rgba(7, 11, 22, 0.9);
+    background-color: rgba(17, 26, 22, 0.9);
+    padding: 10px 20px;
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(5px);
 }
 
 .system-status {
     font-size: 0.85rem;
-    letter-spacing: 2px;
-    color: var(--primary-color);
     display: flex;
     align-items: center;
-    gap: 8px;
+    color: var(--primary-color);
 }
 
 .pulse-dot {
@@ -81,35 +126,34 @@ body {
     height: 8px;
     background-color: var(--primary-color);
     border-radius: 50%;
+    margin-right: 10px;
     box-shadow: 0 0 8px var(--primary-color);
     animation: pulse 1.5s infinite;
 }
 
-@keyframes pulse {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
-}
+@keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-#themeToggleBtn {
+.control-actions button {
     background: transparent;
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    padding: 5px 15px;
+    padding: 5px 12px;
     cursor: pointer;
+    font-family: var(--font-family);
+    font-size: 0.8rem;
+    margin-left: 10px;
     border-radius: 4px;
-    font-family: var(--font-cyber);
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed);
 }
 
-#themeToggleBtn:hover {
-    background: var(--primary-color);
+.control-actions button:hover {
+    background-color: var(--primary-color);
     color: #000;
-    box-shadow: 0 0 10px var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-glow);
 }
 
 /* ==========================================================================
-   3. CONTAINER & CORE LAYOUT
+   4. LAYOUT CONTAINERS & NAVIGATION
    ========================================================================== */
 #main-site {
     max-width: 1100px;
@@ -117,193 +161,288 @@ body {
     padding: 20px;
 }
 
-.card {
-    background: var(--card-bg);
+/* Navigation System */
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
+    margin: 20px 0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+nav a {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 15px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-right: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    transition: all var(--transition-speed);
+}
+
+nav a:last-child {
+    border-right: none;
+}
+
+nav a:hover, nav a.active {
+    background-color: rgba(0, 255, 102, 0.05);
+    color: var(--primary-color);
+    box-shadow: inset 0 -3px 0 var(--primary-color);
+}
+
+/* Cards Design Module */
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 25px;
+    margin-bottom: 25px;
+    position: relative;
 }
 
 .card h2 {
-    color: var(--secondary-color);
+    color: var(--primary-color);
+    font-size: 1.4rem;
     margin-bottom: 15px;
-    font-size: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
+.subtitle, .section-desc {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 20px;
+}
+
+/* Buttons Component */
+.btn-cyber {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: var(--font-family);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 4px;
+    transition: all var(--transition-speed);
+}
+
+.btn-cyber:hover {
+    background: var(--primary-color);
+    color: #000 !important;
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
 /* ==========================================================================
-   4. HEADER / HERO SECTION
+   5. HERO CONTENT & HEADER MODULE
    ========================================================================== */
 header {
     text-align: center;
-    padding: 60px 0 40px 0;
+    padding: 40px 20px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
 }
 
 .logo h2 {
-    font-size: 2.2rem;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
     color: var(--text-color);
 }
 
 .cyber-text {
     color: var(--primary-color);
-    text-shadow: 0 0 10px var(--primary-color);
+    text-shadow: 0 0 8px var(--primary-glow);
 }
 
-#typing {
+.profile-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 25px;
+}
+
+.profile-pic {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    z-index: 2;
+    position: relative;
+}
+
+.glow-ring {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-glow);
+    animation: rotateRing 8s linear infinite;
+    z-index: 1;
+}
+
+@keyframes rotateRing { to { transform: rotate(360deg); } }
+
+header h1 {
     font-size: 1.8rem;
-    margin-top: 15px;
-    color: var(--secondary-color);
-    min-height: 40px;
+    margin-bottom: 10px;
+    height: 35px;
+    color: var(--primary-color);
 }
 
 .matrix-subtitle {
-    color: var(--text-muted);
     font-size: 1rem;
-    margin-top: 5px;
+    opacity: 0.7;
+    margin-bottom: 25px;
 }
 
 .social-links {
-    margin-top: 20px;
+    margin-top: 25px;
     display: flex;
     justify-content: center;
     gap: 20px;
 }
 
 .social-links a {
-    color: var(--text-muted);
-    font-size: 1.4rem;
-    transition: all 0.3s;
+    color: var(--text-color);
+    font-size: 1.3rem;
+    transition: var(--transition-speed);
 }
 
 .social-links a:hover {
-    color: var(--primary-color);
+    color: var(--secondary-color);
     transform: translateY(-3px);
 }
 
 /* ==========================================================================
-   5. NAVIGATION BAR
+   6. METRICS & COMMAND DASHBOARD
    ========================================================================== */
-nav {
+.dashboard-meta {
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    margin-bottom: 35px;
-    padding: 5px;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
 }
 
-nav a {
-    color: var(--text-color);
-    text-decoration: none;
-    padding: 12px 20px;
-    font-size: 0.95rem;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-nav a:hover {
-    color: var(--primary-color);
-    background: rgba(0, 255, 102, 0.05);
-    border-radius: 4px;
-}
-
-/* ==========================================================================
-   6. METRICS GRID (Operational Dashboard)
-   ========================================================================== */
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 .metric-box {
-    background: rgba(0, 0, 0, 0.3);
-    border-left: 4px solid var(--primary-color);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
     padding: 15px;
-    border-radius: 0 6px 6px 0;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
 }
 
 .metric-title {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    opacity: 0.6;
+    margin-bottom: 5px;
 }
 
 .metric-value {
-    display: block;
     font-size: 1.1rem;
-    color: var(--text-color);
-    margin-top: 5px;
     font-weight: bold;
+    color: var(--text-color);
+}
+
+/* Counter Metrics Addon */
+.stats-counters .metric-box {
+    align-items: center;
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.counter-icon {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.count-number {
+    font-size: 1.6rem;
+    color: var(--primary-color);
 }
 
 /* ==========================================================================
-   7. INTERACTIVE TERMINAL
+   7. CORE TERMINAL SUBSYSTEM
    ========================================================================== */
 .terminal-box {
-    background: #050811;
-    border: 1px solid #1e293b;
-    border-radius: 6px;
+    background-color: #000000;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     overflow: hidden;
-    margin-top: 15px;
 }
 
 .terminal-header {
-    background: #0f172a;
+    background-color: #0d1117;
     padding: 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    border-bottom: 1px solid #1e293b;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.dot {
+.terminal-header .dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    margin-right: 6px;
+    display: inline-block;
 }
-.dot.red { background: #ef4444; }
-.dot.yellow { background: #f59e0b; }
-.dot.green { background: #10b981; }
+
+.dot.red { background-color: var(--accent-red); }
+.dot.yellow { background-color: #ffaa00; }
+.dot.green { background-color: var(--primary-color); }
 
 .terminal-title {
-    color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     margin-left: 10px;
+    opacity: 0.7;
 }
 
 .terminal-body {
-    padding: 20px;
-    height: 220px;
+    padding: 15px;
+    height: 250px;
     overflow-y: auto;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
-.terminal-body p { margin-bottom: 10px; }
+.terminal-body p {
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+}
+
 .highlight { color: var(--primary-color); }
-.reply { color: var(--text-muted); padding-left: 15px; }
+.error-text { color: var(--accent-red); }
 
 .terminal-input-row {
     display: flex;
     align-items: center;
-    padding: 10px 20px;
-    background: #070c16;
-    border-top: 1px solid #1e293b;
+    padding: 10px 15px;
+    background-color: #05070a;
+    border-top: 1px solid var(--border-color);
 }
 
 .prompt {
@@ -316,25 +455,90 @@ nav a:hover {
     background: transparent;
     border: none;
     outline: none;
-    color: #fff;
-    font-family: var(--font-cyber);
-    font-size: 0.9rem;
-    width: 100%;
+    color: #ffffff;
+    font-family: var(--font-family);
+    font-size: 0.85rem;
+    flex: 1;
 }
 
 /* ==========================================================================
-   8. SKILLS PROGRESS METERS
+   8. SECURITY NODAL DIAGNOSTICS SCANNER
+   ========================================================================== */
+.scanner-container {
+    background-color: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.scan-animation-box {
+    margin-top: 20px;
+    background-color: #000;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.scanner-bar {
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: scanAnimation 2s linear infinite;
+}
+
+@keyframes scanAnimation {
+    0% { top: 0%; }
+    50% { top: 100%; }
+    100% { top: 0%; }
+}
+
+#scanStatus {
+    font-size: 0.8rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-top: 5px;
+}
+
+.scan-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.scan-result-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.status-safe { color: var(--primary-color); }
+.status-score { color: var(--secondary-color); }
+
+/* ==========================================================================
+   9. TECH STACK EXPERTISE & TOOLKIT
    ========================================================================== */
 .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
+    gap: 25px;
+    margin-bottom: 25px;
 }
 
 .skill-group h3 {
-    color: var(--text-color);
+    font-size: 1rem;
+    color: var(--secondary-color);
     margin-bottom: 15px;
-    font-size: 1.1rem;
 }
 
 .skill-bar-wrapper {
@@ -342,93 +546,277 @@ nav a:hover {
 }
 
 .skill-bar-wrapper p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     margin-bottom: 5px;
-    color: var(--text-muted);
 }
 
 .skill-bar {
-    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
     height: 8px;
+    background-color: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
     border-radius: 4px;
     overflow: hidden;
 }
 
 .skill-bar .fill {
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
     height: 100%;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 8px var(--primary-glow);
+    width: 0%; /* Populated via JS logic */
+    transition: width 1.5s cubic-bezier(0.1, 1, 0.1, 1);
+}
+
+.sub-section-title {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin: 25px 0 15px;
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+}
+
+.tool-item {
+    background-color: rgba(0,0,0,0.2);
+    border: 1px solid var(--border-color);
+    padding: 15px 10px;
+    text-align: center;
     border-radius: 4px;
-    box-shadow: 0 0 8px var(--primary-color);
+    cursor: default;
+    transition: all var(--transition-speed);
+}
+
+.tool-item i {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.tool-item span {
+    font-size: 0.75rem;
+}
+
+.tool-item:hover {
+    border-color: var(--primary-color);
+    transform: scale(1.05);
 }
 
 /* ==========================================================================
-   9. PROJECT CARD GRID
+   10. TIMELINE & CERTIFICATIONS REPOSITORIES
    ========================================================================== */
+.timeline-container {
+    border-left: 2px solid var(--border-color);
+    margin-left: 10px;
+    padding-left: 20px;
+    position: relative;
+}
+
+.timeline-block {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -31px;
+    top: 2px;
+    background-color: var(--bg-color);
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.55rem;
+}
+
+.timeline-content h3 {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+}
+
+.timeline-date {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.timeline-content p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.certificates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.cert-card {
+    background-color: rgba(0,0,0,0.15);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 4px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.cert-icon {
+    font-size: 1.4rem;
+    color: var(--secondary-color);
+    margin-top: 3px;
+}
+
+.cert-card h4 {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.cert-card p {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* ==========================================================================
+   11. DEPLOYED REPOSITORIES (PROJECTS)
+   ========================================================================== */
+.filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 6px 15px;
+    font-family: var(--font-family);
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    transition: all var(--transition-speed);
+}
+
+.filter-btn.active, .filter-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: rgba(0, 255, 102, 0.02);
+}
+
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
 .project-item {
-    background: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0,0,0,0.2);
     border: 1px solid var(--border-color);
     padding: 20px;
-    border-radius: 6px;
-    transition: transform 0.3s, border-color 0.3s;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-speed);
 }
 
 .project-item:hover {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
     border-color: var(--secondary-color);
 }
 
 .project-item h3 {
-    color: var(--secondary-color);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--secondary-color);
 }
 
 .project-item p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    font-size: 0.85rem;
+    opacity: 0.8;
     margin-bottom: 15px;
+    flex-grow: 1;
 }
 
 .tech-tags {
     display: flex;
     gap: 8px;
+    margin-bottom: 15px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
 }
 
 .tech-tags span {
-    font-size: 0.75rem;
-    background: rgba(0, 229, 255, 0.1);
-    color: var(--secondary-color);
+    font-size: 0.7rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
     padding: 2px 8px;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 3px;
 }
 
 .btn-link {
-    display: inline-block;
     color: var(--primary-color);
+    font-size: 0.8rem;
     text-decoration: none;
-    font-size: 0.85rem;
-    border: 1px solid var(--primary-color);
-    padding: 6px 12px;
-    border-radius: 4px;
-    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .btn-link:hover {
-    background: var(--primary-color);
-    color: #000;
+    text-decoration: underline;
 }
 
+/* GitHub Ledger UI Component */
+.github-stats-card {
+    background: #000;
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.github-stats-card h3 {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.github-stats-card p {
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+}
+
+.mock-commit-graph {
+    display: flex;
+    gap: 4px;
+}
+
+.commit-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #161b22;
+    border-radius: 2px;
+}
+
+.commit-dot.level-0 { background-color: #161b22; }
+.commit-dot.level-1 { background-color: #0e4429; }
+.commit-dot.level-2 { background-color: #006d3a; }
+.commit-dot.level-3 { background-color: #26a641; }
+.commit-dot.level-4 { background-color: #39d353; }
+
 /* ==========================================================================
-   10. PHOTO GALLERY & MEDIA
+   12. MEDIA CENTER GALLERY & LIGHTBOX LIGHT
    ========================================================================== */
 .gallery {
     display: grid;
@@ -438,135 +826,186 @@ nav a:hover {
 
 .gallery-item {
     position: relative;
-    border-radius: 6px;
-    overflow: hidden;
     border: 1px solid var(--border-color);
-    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    cursor: pointer;
 }
 
 .gallery-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s;
+    transition: transform var(--transition-speed);
 }
 
-.overlay {
+.gallery-item .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    background: rgba(5, 8, 17, 0.85);
-    color: var(--primary-color);
-    font-size: 0.8rem;
+    background: rgba(17, 26, 22, 0.85);
+    padding: 8px;
+    font-size: 0.75rem;
     text-align: center;
-    padding: 8px 0;
+    border-top: 1px solid var(--border-color);
     transform: translateY(100%);
-    transition: transform 0.3s;
+    transition: transform var(--transition-speed);
 }
 
-.gallery-item:hover img {
-    transform: scale(1.1);
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-item:hover .overlay { transform: translateY(0); }
+
+/* Modal Box Module */
+.lightbox-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
-.gallery-item:hover final-image .overlay,
-.gallery-item:hover .overlay {
-    transform: translateY(0);
+.lightbox-img {
+    max-width: 85%;
+    max-height: 75%;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.lightbox-caption {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: var(--primary-color);
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
 }
 
 /* ==========================================================================
-   11. LAB LOGS & CONTACT FORMS
+   13. LAB LOGS & TRANSMISSION CONTACT PORTAL
    ========================================================================== */
-.section-desc {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin-bottom: 20px;
-}
-
 .blog-form, .contact-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
-input, textarea {
-    background: rgba(0, 0, 0, 0.4);
+.blog-form input, .blog-form textarea,
+.contact-form input, .contact-form textarea {
+    background-color: rgba(0,0,0,0.3);
     border: 1px solid var(--border-color);
-    padding: 12px;
-    border-radius: 5px;
     color: #fff;
-    font-family: var(--font-cyber);
-    font-size: 0.9rem;
-    transition: border 0.3s;
-}
-
-input:focus, textarea:focus {
-    border-color: var(--secondary-color);
+    padding: 12px;
+    font-family: var(--font-family);
+    font-size: 0.85rem;
+    border-radius: 4px;
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 225, 255, 0.3);
 }
 
-textarea {
-    resize: vertical;
-    min-height: 100px;
+.blog-form input:focus, .blog-form textarea:focus,
+.contact-form input:focus, .contact-form textarea:focus {
+    border-color: var(--secondary-color);
 }
 
-button[onclick], button[type="submit"] {
+.blog-form button, .contact-form button {
     background: transparent;
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
-    padding: 12px 20px;
-    font-family: var(--font-cyber);
+    padding: 12px;
     cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-    align-self: flex-start;
-    transition: all 0.3s;
+    font-family: var(--font-family);
+    border-radius: 4px;
+    transition: all var(--transition-speed);
 }
 
-button[onclick]:hover, button[type="submit"]:hover {
-    background: var(--primary-color);
+.blog-form button:hover, .contact-form button:hover {
+    background-color: var(--primary-color);
     color: #000;
-    box-shadow: 0 0 12px var(--primary-color);
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
 }
 
 @media (max-width: 600px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
+    .form-row { grid-template-columns: 1fr; }
 }
 
-/* Dynamic Posted Notes Styles */
-#blogList {
-    margin-top: 25px;
+.dynamic-logs-container {
+    margin-top: 20px;
 }
 
-.post-card {
-    background: rgba(0, 0, 0, 0.2);
+.log-item {
+    background-color: rgba(0,0,0,0.15);
     border-left: 3px solid var(--secondary-color);
-    padding: 15px;
-    margin-bottom: 15px;
+    padding: 12px;
     border-radius: 0 4px 4px 0;
+    margin-bottom: 12px;
 }
 
-.post-card h4 {
+.log-item h4 {
+    font-size: 0.9rem;
     color: var(--secondary-color);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
+}
+
+.log-item p {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.form-feedback-msg {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    text-align: center;
 }
 
 /* ==========================================================================
-   12. FOOTER
+   14. SYSTEM FOOTER & SYSTEM SCROLL UTILITY
    ========================================================================== */
 footer {
     text-align: center;
-    padding: 40px 0;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    padding: 20px;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    border-top: 1px dashed var(--border-color);
+    margin-top: 20px;
+}
+
+#backToTopBtn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+    transition: all var(--transition-speed);
+}
+
+#backToTopBtn:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-glow);
 }

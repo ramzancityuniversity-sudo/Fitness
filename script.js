@@ -1,231 +1,415 @@
 /* ==========================================================================
-   1. MATRIX RAIN BACKGROUND EFFECT (ক্যানভাস অ্যানিমেশন)
+   1. MAIN MATRIX DIGITAL RAIN LOGIC
    ========================================================================== */
 const canvas = document.getElementById('bg');
 const ctx = canvas.getContext('2d');
 
-// ক্যানভাসের সাইজ উইন্ডোর সমান করা
-function resizeCanvas() {
+let columns;
+let rainDrops = [];
+const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+=-{}[]|;:',.<>?/";
+
+function initMatrix() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
 
-// ম্যাট্রিক্স ক্যারেক্টার সেট (Binary & Hexadecimal for Cyber Theme)
-const katakana = "0101010101ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789X0F4A9C8D";
-const alphabet = katakana.split("");
-
-const fontSize = 16;
-let columns = canvas.width / fontSize;
-
-const rainDrops = [];
-for (let x = 0; x < columns; x++) {
-    rainDrops[x] = 1;
+    columns = Math.floor(canvas.width / 20);
+    rainDrops = Array(columns).fill(1);
 }
 
 function drawMatrix() {
-    // হালকা ট্রান্সপারেন্ট ব্যাকগ্রাউন্ড যাতে রেইন ট্রেইল (লেজ) তৈরি হয়
-    ctx.fillStyle = 'rgba(10, 15, 29, 0.05)'; 
+    ctx.fillStyle = 'rgba(10, 15, 13, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#00ff66'; // Matrix Green Color
-    ctx.font = fontSize + 'px monospace';
+    // Dynamic color shifting based on active system class rules
+    const isLight = document.body.classList.contains('light-cyber-theme');
+    ctx.fillStyle = isLight ? 'rgba(0, 136, 51, 0.35)' : '#00ff66';
+    ctx.font = '15px monospace';
 
     for (let i = 0; i < rainDrops.length; i++) {
-        const text = alphabet[Math.floor(Math.random() * alphabet.length)];
-        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        ctx.fillText(text, i * 20, rainDrops[i] * 20);
 
-        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        if (rainDrops[i] * 20 > canvas.height && Math.random() > 0.975) {
             rainDrops[i] = 0;
         }
         rainDrops[i]++;
     }
 }
+
+window.addEventListener('resize', initMatrix);
+initMatrix();
 setInterval(drawMatrix, 30);
 
+/* ==========================================================================
+   2. SITE PRELOADER & INITIALIZATION RUNTIMES
+   ========================================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+    // Hide loading screen gracefully after simulated processing time
+    setTimeout(() => {
+        const preloader = document.getElementById('loading-screen');
+        if (preloader) {
+            preloader.style.opacity = '0';
+            setTimeout(() => preloader.style.display = 'none', 500);
+        }
+        // Initialize dynamic effects
+        startTypingHero();
+        animateSkillBars();
+        initializeCounters();
+        loadLocalLogs();
+    }, 1500);
+});
 
 /* ==========================================================================
-   2. DYNAMIC TYPING ANIMATION (টাইপিং ইফেক্ট)
+   3. HERO AUTOMATED INTERACTIVE TYPING STRINGS
    ========================================================================== */
 const typingElement = document.getElementById('typing');
-const phrases = [
-    "Welcome to My Cyber Space.",
-    "Initializing Secure Core Infrastructure...",
-    "Status: Systems Fully Operational.",
-    "Exploring Network Defense & DevSecOps."
+const titles = [
+    "System Diagnostic: Online",
+    "Md. Ramzan Miah",
+    "Cyber Security Specialist",
+    "Full-Stack Developer"
 ];
-let phraseIndex = 0;
+let titleIndex = 0;
 let charIndex = 0;
 let isDeleting = false;
 
-function typeEffect() {
-    const currentPhrase = phrases[phraseIndex];
-    
+function startTypingHero() {
+    if (!typingElement) return;
+
+    const currentString = titles[titleIndex];
+
     if (isDeleting) {
-        typingElement.textContent = currentPhrase.substring(0, charIndex - 1);
+        typingElement.innerHTML = currentString.substring(0, charIndex - 1);
         charIndex--;
     } else {
-        typingElement.textContent = currentPhrase.substring(0, charIndex + 1);
+        typingElement.innerHTML = currentString.substring(0, charIndex + 1);
         charIndex++;
     }
 
-    let typeSpeed = isDeleting ? 30 : 60;
+    let typingSpeed = isDeleting ? 40 : 80;
 
-    if (!isDeleting && charIndex === currentPhrase.length) {
-        typeSpeed = 2000; // পুরো লাইন শেষ হলে ২ সেকেন্ড পজ থাকবে
+    if (!isDeleting && charIndex === currentString.length) {
+        typingSpeed = 1800; // Pause display time
         isDeleting = true;
     } else if (isDeleting && charIndex === 0) {
         isDeleting = false;
-        phraseIndex = (phraseIndex + 1) % phrases.length;
-        typeSpeed = 500; // নতুন লাইন শুরুর আগে ছোট পজ
+        titleIndex = (titleIndex + 1) % titles.length;
+        typingSpeed = 400; // Inter-title gap delay
     }
 
-    setTimeout(typeEffect, typeSpeed);
+    setTimeout(startTypingHero, typingSpeed);
 }
-// অ্যানিমেশন শুরু
-document.addEventListener("DOMContentLoaded", typeEffect);
-
 
 /* ==========================================================================
-   3. INTERACTIVE CORE SHELL (লাইভ টার্মিনাল লজিক)
+   4. CONTROL HANDLERS (THEME SWITCHER & CORE AUDIO)
    ========================================================================== */
-const terminalInput = document.getElementById("terminalInput");
-const terminalOutput = document.getElementById("terminalOutput");
+let audioContext;
+let oscillator;
+let isAudioPlaying = false;
+
+function toggleMusic() {
+    const btn = document.getElementById('musicToggleBtn');
+    if (!isAudioPlaying) {
+        // Simulated structural synthesis sound node for sci-fi atmosphere
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(60, audioContext.currentTime); // Deep hum sound
+            gainNode.gain.setValueAtTime(0.02, audioContext.currentTime); // Low safe volume
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.start();
+            
+            isAudioPlaying = true;
+            btn.innerHTML = `<i class="fas fa-volume-up"></i> Audio ON`;
+        } catch (e) {
+            console.log("Audio contexts blocked by vendor secure initialization guidelines.");
+        }
+    } else {
+        if (oscillator) oscillator.stop();
+        isAudioPlaying = false;
+        btn.innerHTML = `<i class="fas fa-volume-mute"></i> Audio OFF`;
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('light-cyber-theme');
+}
+
+/* ==========================================================================
+   5. REALTIME CLOCK MODULE
+   ========================================================================== */
+function updateClock() {
+    const clockElement = document.getElementById('clock');
+    if (!clockElement) return;
+    const now = new Date();
+    clockElement.innerHTML = `<i class="fas fa-clock"></i> Local Node Time: ${now.toTimeString().split(' ')[0]}`;
+}
+setInterval(updateClock, 1000);
+
+/* ==========================================================================
+   6. AUTO-INCREMENT STATISTICAL GRAPH METRICS
+   ========================================================================== */
+function initializeCounters() {
+    const counters = document.querySelectorAll('.count-number');
+    counters.forEach(counter => {
+        const target = +counter.getAttribute('data-target');
+        const speed = target / 50; 
+        
+        const updateCount = () => {
+            const current = +counter.innerText;
+            if (current < target) {
+                counter.innerText = Math.ceil(current + speed);
+                setTimeout(updateCount, 25);
+            } else {
+                counter.innerText = target;
+            }
+        };
+        updateCount();
+    });
+}
+
+/* ==========================================================================
+   7. TECH STACK LEVEL FILL ANIMATION
+   ========================================================================== */
+function animateSkillBars() {
+    const fills = document.querySelectorAll('.skill-bar .fill');
+    fills.forEach(fill => {
+        const targetWidth = fill.getAttribute('data-width');
+        fill.style.width = targetWidth;
+    });
+}
+
+/* ==========================================================================
+   8. CORE COMMAND LINE SHELL SIMULATION (TERMINAL)
+   ========================================================================== */
+const terminalInput = document.getElementById('terminalInput');
+const terminalOutput = document.getElementById('terminalOutput');
 
 if (terminalInput) {
-    terminalInput.addEventListener("keydown", function(e) {
-        if (e.key === "Enter") {
-            let command = this.value.toLowerCase().trim();
-            let response = "";
-            
-            // কমান্ড হ্যান্ডলিং লজিক
-            if (command === "help") {
-                response = "Available Commands:<br>" +
-                           " - <span class='highlight'>about</span> : Display system owner profile.<br>" +
-                           " - <span class='highlight'>skills</span> : Fetch verified technology stack details.<br>" +
-                           " - <span class='highlight'>status</span> : Check current system and connection health.<br>" +
-                           " - <span class='highlight'>clear</span> : Purge the terminal screen buffer.";
-            } else if (command === "about") {
-                response = "<strong>Profile:</strong> Md. Ramzan Miah<br>" +
-                           "<strong>Focus:</strong> Computer Science Student, Network Administration, and Penetration Testing.";
-            } else if (command === "skills") {
-                response = "<strong>Network Security:</strong> IP Subnetting (VLSM), OSI Deep-Dive, Securing Protocols.<br>" +
-                           "<strong>Systems:</strong> Linux Environment (Ubuntu / Kali Deployment Blueprints).<br>" +
-                           "<strong>Development:</strong> Clean Web Architecture (HTML5, CSS3, JS Core), Python Automations.";
-            } else if (command === "status") {
-                response = "Host: Operational | Protocol: HTTPS Secure | Security Mode: Maximum.";
-            } else if (command === "clear") {
-                terminalOutput.innerHTML = "";
-                this.value = "";
-                return;
-            } else if (command === "") {
-                // ফাঁকা এন্টার দিলে কোনো রেসপন্স করবে না
-                return;
-            } else {
-                response = `Command error: Engine could not resolve symbol '${command}'. Type <span class='highlight'>help</span> for valid directives.`;
-            }
-            
-            // টার্মিনালে টেক্সট প্রিন্ট করা
-            terminalOutput.innerHTML += `<p><span class='prompt'>ramzan-miah$</span> ${this.value}</p><p class='reply'>${response}</p>`;
-            this.value = ""; // ইনপুট ক্লিয়ার করা
-            terminalOutput.scrollTop = terminalOutput.scrollHeight; // স্ক্রল সবসময় নিচে রাখা
+    terminalInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const command = this.value.trim().toLowerCase();
+            processCommand(command);
+            this.value = '';
         }
     });
 }
 
+function processCommand(cmd) {
+    if (!terminalOutput) return;
 
-/* ==========================================================================
-   4. CENTRAL LAB LOGS MANAGEMENT (লোকাল স্টোরেজ ব্লগ সিস্টেম)
-   ========================================================================== */
-// পেজ লোড হওয়ার সাথে সাথে আগে সেভ করা নোটগুলো লোড হবে
-document.addEventListener("DOMContentLoaded", loadBlogs);
+    let outputHtml = `<p><span class="prompt">ramzan-miah$</span> ${cmd}</p>`;
 
-function addBlog() {
-    const titleInput = document.getElementById("title");
-    const contentInput = document.getElementById("content");
-    const blogList = document.getElementById("blogList");
-
-    if (titleInput.value.trim() === "" || contentInput.value.trim() === "") {
-        alert("Transmission Failed: Subject and Content fields cannot be empty.");
-        return;
+    switch (cmd) {
+        case 'help':
+            outputHtml += `<p>Available Commands:<br>
+            - <span class="highlight">about</span>     : Show system operational identity portfolio core profile details.<br>
+            - <span class="highlight">skills</span>    : Display cataloged skill proficiency arrays.<br>
+            - <span class="highlight">projects</span>  : Show verified structural application repositories.<br>
+            - <span class="highlight">whoami</span>    : Query user node information data parameters.<br>
+            - <span class="highlight">contact</span>   : Display central secure node communication vectors.<br>
+            - <span class="highlight">clear</span>     : Wipe core command history context buffers.</p>`;
+            break;
+        case 'about':
+            outputHtml += `<p>Identity: Md. Ramzan Miah<br>Role: Cyber Security Specialist & Network Architect Candidate.<br>Status: Running full learning optimization diagnostics algorithms.</p>`;
+            break;
+        case 'skills':
+            outputHtml += `<p>Core Frameworks Extracted:<br>- VLSM & Variable Subnetting Configuration Architecture (90%)<br>- Unix System Operations Management (85%)<br>- Native Interface Assembly: JavaScript / Python Lab Architectures (80%)</p>`;
+            break;
+        case 'projects':
+            outputHtml += `<p>Active Repositories:<br>1. Network Subnetting Tool (JS)<br>2. Automated Ubuntu Setup Script (Python/Bash Core)</p>`;
+            break;
+        case 'whoami':
+            outputHtml += `<p>Node Terminal Authentication Profile: guest@ramzan-miah.net. Remote Address: Virtual Socket Stream Environment.</p>`;
+            break;
+        case 'contact':
+            outputHtml += `<p>Transmission Gateways:<br>Email: mdramzanma@gmail.com<br>LinkedIn: /in/md-ramzan-miah-s17</p>`;
+            break;
+        case 'clear':
+            terminalOutput.innerHTML = '';
+            return;
+        case '':
+            outputHtml = `<p><span class="prompt">ramzan-miah$</span></p>`;
+            break;
+        default:
+            outputHtml += `<p class="error-text">Command error syntax rejection: Unknown primitive request instruction structure '${cmd}'. Type 'help' for diagnostics.</p>`;
     }
 
-    const newLog = {
-        id: Date.now(),
-        title: titleInput.value,
-        content: contentInput.value,
-        timestamp: new Date().toLocaleString()
-    };
-
-    // লোকাল স্টোরেজ থেকে আগের ডেটা আনা বা নতুন অ্যারে তৈরি
-    let existingLogs = JSON.parse(localStorage.getItem("cyber_logs")) || [];
-    existingLogs.unshift(newLog); // নতুন ডেটা সবার উপরে রাখা
-    localStorage.setItem("cyber_logs", JSON.stringify(existingLogs));
-
-    // ইনপুট ফিল্ড রিসেট করা
-    titleInput.value = "";
-    contentInput.value = "";
-
-    loadBlogs();
+    terminalOutput.innerHTML += outputHtml;
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
 }
 
-function loadBlogs() {
-    const blogList = document.getElementById("blogList");
-    if (!blogList) return;
-    
-    let existingLogs = JSON.parse(localStorage.getItem("cyber_logs")) || [];
-    blogList.innerHTML = "";
+/* ==========================================================================
+   9. DIAGNOSTIC INTERFACE SYSTEM Threat Assessment (SCANNER)
+   ========================================================================== */
+function startSecurityScan() {
+    const overlay = document.getElementById('scanOverlay');
+    const status = document.getElementById('scanStatus');
+    if (!overlay || !status) return;
 
-    existingLogs.forEach(log => {
-        blogList.innerHTML += `
-            <div class="post-card">
-                <h4><i class="fas fa-terminal"></i> ${escapeHTML(log.title)}</h4>
-                <small style="color: var(--primary-color); font-size: 0.75rem;">Timestamp: ${log.timestamp}</small>
-                <p style="margin-top: 8px; font-size: 0.9rem; color: var(--text-muted); white-space: pre-line;">${escapeHTML(log.content)}</p>
-            </div>
-        `;
+    overlay.style.display = 'block';
+    
+    const processes = [
+        "Analyzing browser local memory variables...",
+        "Evaluating TLS configuration validation records...",
+        "Inspecting security ports against Cross-Site Attack Vectors...",
+        "Finalizing diagnostic report assessment data logs..."
+    ];
+
+    let checkPhase = 0;
+    const interval = setInterval(() => {
+        if (checkPhase < processes.length) {
+            status.innerText = processes[checkPhase];
+            checkPhase++;
+        } else {
+            clearInterval(interval);
+            overlay.style.display = 'none';
+            // Randomize score parameters to make it dynamic
+            document.getElementById('sec-score').innerText = `${Math.floor(Math.random() * 5) + 95}%`;
+            alert("Threat Diagnostics completed. 0 runtime malware vectors parsed on structural endpoints.");
+        }
+    }, 1000);
+}
+
+/* ==========================================================================
+   10. FILTERS - PACKET DIRECTORY FILTRATION (PROJECTS)
+   ========================================================================== */
+function filterProjects(category) {
+    const items = document.querySelectorAll('.project-item');
+    const buttons = document.querySelectorAll('.filter-btn');
+
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    items.forEach(item => {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+            item.style.display = 'flex';
+        } else {
+            item.style.display = 'none';
+        }
     });
 }
 
-// XSS অ্যাটাক প্রতিরোধের জন্য HTML Escape ফাংশন
-function escapeHTML(str) {
-    return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-    );
+/* ==========================================================================
+   11. LIGHTBOX SYSTEM DESIGN (MEDIA VIEWER)
+   ========================================================================== */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxCaption = document.getElementById('lightbox-caption');
+
+function openLightbox(src, caption) {
+    if (!lightbox || !lightboxImg || !lightboxCaption) return;
+    lightboxImg.src = src;
+    lightboxCaption.innerText = caption;
+    lightbox.style.display = 'flex';
 }
 
+function closeLightbox() {
+    if (lightbox) lightbox.style.display = 'none';
+}
 
 /* ==========================================================================
-   5. INTERFACE THEME TOGGLE CONTROL (ডার্ক / লাইট থিম সুইচ)
+   12. CENTRAL LAB LOGGING LEDGER MEMORY (BLOGS)
    ========================================================================== */
-function toggleTheme() {
-    const body = document.body;
-    body.classList.toggle("light-theme");
-    
-    const icon = document.querySelector("#themeToggleBtn i");
-    if (body.classList.contains("light-theme")) {
-        icon.className = "fas fa-eye-slash";
-    } else {
-        icon.className = "fas fa-eye";
+function addBlog() {
+    const titleInp = document.getElementById('title');
+    const contentInp = document.getElementById('content');
+
+    if (!titleInp || !contentInp || !titleInp.value.trim() || !contentInp.value.trim()) {
+        alert("Input values rejected. Empty data fields cannot be committed to system memory.");
+        return;
     }
+
+    const logEntry = {
+        title: titleInp.value.trim(),
+        content: contentInp.value.trim(),
+        timestamp: new Date().toLocaleString()
+    };
+
+    let logs = JSON.parse(localStorage.getItem('cyber_logs')) || [];
+    logs.unshift(logEntry);
+    localStorage.setItem('cyber_logs', JSON.stringify(logs));
+
+    titleInp.value = '';
+    contentInp.value = '';
+    loadLocalLogs();
 }
 
+function loadLocalLogs() {
+    const logList = document.getElementById('blogList');
+    if (!logList) return;
+
+    let logs = JSON.parse(localStorage.getItem('cyber_logs')) || [];
+    
+    if (logs.length === 0) {
+        logList.innerHTML = `<p style="font-size: 0.8rem; opacity: 0.5; text-align: center;">No local memory technical data records found in runtime index storage blocks.</p>`;
+        return;
+    }
+
+    logList.innerHTML = logs.map(log => `
+        <div class="log-item">
+            <h4>${log.title} <span style="font-size:0.65rem; opacity:0.5; float:right;">${log.timestamp}</span></h4>
+            <p>${log.content}</p>
+        </div>
+    `).join('');
+}
 
 /* ==========================================================================
-   6. CONTACT FORM PORTAL VALIDATION (মেসেজ ডেসপ্যাচ লজিক)
+   13. PORTAL PACKET DISPATCHER ENGINE (CONTACT ENCRYPTION)
    ========================================================================== */
-function handleContactSubmit(event) {
-    event.preventDefault();
-    
-    const name = document.getElementById("senderName").value;
-    const email = document.getElementById("senderEmail").value;
-    const subject = document.getElementById("msgSubject").value;
-    const body = document.getElementById("msgBody").value;
+function handleContactSubmit(e) {
+    e.preventDefault();
+    const feedback = document.getElementById('formFeedback');
+    if (!feedback) return;
 
-    // মেসেজ সেন্ড হওয়ার একটি প্রফেশনাল সাইবার প্রিভিউ বা অ্যালার্ট
-    alert(`Transmission Secured!\n\nSender: ${name}\nTarget Subject: ${subject}\n\nStatus: Securely queued for dispatch!`);
-    
-    // ফর্ম রিসেট করা
-    document.getElementById("contactForm").reset();
+    feedback.style.color = "var(--primary-color)";
+    feedback.innerText = "Transmitting data packets over encrypted pipeline links...";
+
+    setTimeout(() => {
+        feedback.innerText = "Transmission verified. Message dispatched successfully to Md. Ramzan Miah.";
+        document.getElementById('contactForm').reset();
+    }, 1500);
+}
+
+/* ==========================================================================
+   14. SYSTEM NAVIGATION UTILITY (BACK TO TOP / LINK ACTIVE STATE TRACKER)
+   ========================================================================== */
+const backToTopBtn = document.getElementById('backToTopBtn');
+
+window.onscroll = function() {
+    // Show/hide Back To Top button
+    if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
+        if (backToTopBtn) backToTopBtn.style.display = "flex";
+    } else {
+        if (backToTopBtn) backToTopBtn.style.display = "none";
+    }
+
+    // Dynamic Navigation Highlighting during structural scroll events
+    const sections = document.querySelectorAll('header, section');
+    const navLinks = document.querySelectorAll('nav a');
+
+    sections.forEach(sec => {
+        const top = window.scrollY;
+        const offset = sec.offsetTop - 150;
+        const height = sec.offsetHeight;
+        const id = sec.getAttribute('id');
+
+        if (top >= offset && top < offset + height && id) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${id}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    });
+};
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
